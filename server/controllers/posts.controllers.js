@@ -15,7 +15,7 @@ export const createPost = async (req, res) => {
   try {
     const { title, description } = req.body;
     let image;
-    if (req.files.image) {
+    if (req.files?.image) {
       const result = await uploadImage(req.files.image.tempFilePath);
       await fs.remove(req.files.image.tempFilePath);
       image = {
@@ -47,12 +47,12 @@ export const deletePost = async (req, res) => {
     if (!removedPost) {
       return res.status(404).send("Post not found");
     }
-    if (removedPost.image) {
+    if (removedPost.image.public_id) {
       await deleteImage(removedPost.image.public_id);
     }
-    return res.send(removedPost);
+    return res.send(removedPost.data);
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
